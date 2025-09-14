@@ -78,7 +78,7 @@ check_binary_exists() {
     local url="https://github.com/$REPO/releases/download/$version/$binary_name"
 
     # GitHub releases return 302 redirect, not 200 OK
-    if curl -s --head "$url" | head -n 1 | grep -qE "(200 OK|302)"; then
+    if curl -s --head "$url" | head -n 1 | grep -qE "(200|302)"; then
         return 0
     else
         return 1
