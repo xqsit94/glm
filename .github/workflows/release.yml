@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build binaries
@@ -45,7 +48,7 @@ jobs:
       uses: actions/download-artifact@v4
 
     - name: Create release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
           glm-darwin-amd64/glm-darwin-amd64
