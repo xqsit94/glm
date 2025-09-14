@@ -4,10 +4,10 @@ set -e
 
 # GLM CLI Installation Script
 # This script detects the OS and architecture, downloads the appropriate binary,
-# and installs it to /usr/local/bin
+# and installs it to ~/.local/bin
 
 REPO="xqsit94/glm"
-INSTALL_DIR="/usr/local/bin"
+INSTALL_DIR="$HOME/.local/bin"
 BINARY_NAME="glm"
 
 # Colors for output
@@ -104,18 +104,16 @@ install_binary() {
     # Make binary executable
     chmod +x "$temp_file"
 
-    # Check if we can write to install directory
-    if [[ ! -w "$INSTALL_DIR" ]]; then
-        log_warning "Need sudo privileges to install to $INSTALL_DIR"
-        if ! sudo mv "$temp_file" "$INSTALL_DIR/$BINARY_NAME"; then
-            log_error "Failed to install binary to $INSTALL_DIR"
-            exit 1
-        fi
-    else
-        if ! mv "$temp_file" "$INSTALL_DIR/$BINARY_NAME"; then
-            log_error "Failed to install binary to $INSTALL_DIR"
-            exit 1
-        fi
+    # Create install directory if it doesn't exist
+    if [[ ! -d "$INSTALL_DIR" ]]; then
+        log_info "Creating directory: $INSTALL_DIR"
+        mkdir -p "$INSTALL_DIR"
+    fi
+
+    # Move binary to install directory
+    if ! mv "$temp_file" "$INSTALL_DIR/$BINARY_NAME"; then
+        log_error "Failed to install binary to $INSTALL_DIR"
+        exit 1
     fi
 
     log_success "GLM CLI installed to $INSTALL_DIR/$BINARY_NAME"
@@ -128,15 +126,32 @@ verify_installation() {
         log_success "Installation verified! GLM CLI is ready to use."
         log_info "Run 'glm --help' to get started."
 
-        # Check if /usr/local/bin is in PATH
+        # Check if ~/.local/bin is in PATH
         if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
             log_warning "$INSTALL_DIR is not in your PATH"
-            log_warning "Add this to your shell profile (.bashrc, .zshrc, etc.):"
-            log_warning "export PATH=\"$INSTALL_DIR:\$PATH\""
+            log_info "To use GLM CLI from anywhere, add this line to your shell profile:"
+            log_info "  ~/.bashrc (for bash) or ~/.zshrc (for zsh):"
+            log_info ""
+            log_info "  export PATH=\"\$HOME/.local/bin:\$PATH\""
+            log_info ""
+            log_info "Then restart your terminal or run: source ~/.bashrc"
         fi
     else
-        log_error "Installation verification failed. GLM CLI not found in PATH."
-        exit 1
+        # Check if binary exists at install location even if not in PATH
+        if [[ -f "$INSTALL_DIR/$BINARY_NAME" ]]; then
+            log_success "GLM CLI installed successfully to $INSTALL_DIR/$BINARY_NAME"
+            log_warning "However, $INSTALL_DIR is not in your PATH"
+            log_info "To use GLM CLI, add this line to your shell profile:"
+            log_info "  ~/.bashrc (for bash) or ~/.zshrc (for zsh):"
+            log_info ""
+            log_info "  export PATH=\"\$HOME/.local/bin:\$PATH\""
+            log_info ""
+            log_info "Then restart your terminal or run: source ~/.bashrc"
+            log_info "Or run directly with: $INSTALL_DIR/$BINARY_NAME"
+        else
+            log_error "Installation verification failed. GLM CLI not found."
+            exit 1
+        fi
     fi
 }
 
