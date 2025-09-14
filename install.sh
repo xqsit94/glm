@@ -62,7 +62,6 @@ detect_arch() {
 
 # Get latest release version
 get_latest_version() {
-    log_info "Fetching latest release version..."
     curl -s "https://api.github.com/repos/$REPO/releases/latest" | \
         grep '"tag_name":' | \
         sed -E 's/.*"([^"]+)".*/\1/' | \
@@ -158,6 +157,7 @@ main() {
     log_info "Detected system: $OS/$ARCH"
 
     # Get latest version
+    log_info "Fetching latest release version..."
     VERSION=$(get_latest_version)
     if [[ -z "$VERSION" ]]; then
         log_error "Failed to fetch latest release version"
