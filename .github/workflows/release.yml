@@ -29,7 +29,7 @@ jobs:
         go build -o glm-${{ matrix.goos }}-${{ matrix.goarch }} .
 
     - name: Upload binary
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: glm-${{ matrix.goos }}-${{ matrix.goarch }}
         path: glm-${{ matrix.goos }}-${{ matrix.goarch }}
@@ -42,7 +42,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Download all artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
 
     - name: Create release
       uses: softprops/action-gh-release@v1
