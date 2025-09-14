@@ -11,23 +11,47 @@ A command-line interface for managing GLM (ChatGLM) settings with Claude Code, e
 
 ## Installation
 
-### Prerequisites
+### Quick Install (Recommended)
 
-- Go 1.21 or later
-- Your Anthropic API token
-
-### Build from Source
+Install GLM CLI with a single command using curl:
 
 ```bash
-git clone <repository-url>
+curl -fsSL https://raw.githubusercontent.com/xqsit94/glm/main/install.sh | bash
+```
+
+This will automatically:
+- Detect your operating system and architecture
+- Download the latest binary release
+- Install to `/usr/local/bin/glm`
+- Verify the installation
+
+### Manual Installation
+
+#### Option 1: Download Pre-built Binary
+
+1. Go to the [releases page](https://github.com/xqsit94/glm/releases)
+2. Download the binary for your platform:
+   - macOS Intel: `glm-darwin-amd64`
+   - macOS Apple Silicon: `glm-darwin-arm64`
+   - Linux x64: `glm-linux-amd64`
+   - Linux ARM64: `glm-linux-arm64`
+3. Make it executable and move to PATH:
+   ```bash
+   chmod +x glm-*
+   sudo mv glm-* /usr/local/bin/glm
+   ```
+
+#### Option 2: Build from Source
+
+**Prerequisites:**
+- Go 1.24 or later
+- Your GLM API token
+
+```bash
+git clone https://github.com/xqsit94/glm.git
 cd glm
 go mod tidy
 go build -o glm
-```
-
-### Install Globally
-
-```bash
 sudo mv glm /usr/local/bin/
 ```
 
@@ -163,6 +187,9 @@ The CLI manages the following files:
 ## Example Workflow
 
 ```bash
+# Install GLM CLI
+curl -fsSL https://raw.githubusercontent.com/xqsit94/glm/main/install.sh | bash
+
 # First time setup
 glm install claude
 glm token set  # Enter your token securely
@@ -181,22 +208,54 @@ glm disable
 
 ## Troubleshooting
 
-### npm not found
+### Installation Issues
+
+#### curl not found
+If you get a "curl not found" error:
+- **macOS**: Install Xcode Command Line Tools: `xcode-select --install`
+- **Linux**: Install curl: `sudo apt install curl` (Ubuntu/Debian) or `sudo yum install curl` (CentOS/RHEL)
+
+#### Permission denied during installation
+If the installer fails with permission errors:
+```bash
+# Download and run manually with explicit sudo
+curl -fsSL https://raw.githubusercontent.com/xqsit94/glm/main/install.sh -o install.sh
+chmod +x install.sh
+sudo ./install.sh
+```
+
+#### Binary not found for your platform
+If no binary is available for your platform:
+1. Check the [releases page](https://github.com/xqsit94/glm/releases) for available binaries
+2. Build from source using the manual installation instructions
+
+### Runtime Issues
+
+#### npm not found
 If you get an npm error when running `glm install claude`:
 1. Install Node.js from https://nodejs.org/
 2. Restart your terminal
 3. Run `glm install claude` again
 
-### Authentication token not found
+#### Authentication token not found
 Set up your token using any of these methods:
 - `glm token set` (recommended)
 - Set environment variable: `export ANTHROPIC_AUTH_TOKEN="your_token"`
 
-### Settings not taking effect
+#### Settings not taking effect
 Try:
 1. Restart your Claude Code session
 2. Verify the settings file exists: `cat ~/.claude/settings.json`
 3. Re-enable GLM: `glm disable && glm enable`
+
+#### Command not found after installation
+If `glm` command is not found after installation:
+1. Check if `/usr/local/bin` is in your PATH: `echo $PATH`
+2. Add to PATH if missing (add to `.bashrc`, `.zshrc`, etc.):
+   ```bash
+   export PATH="/usr/local/bin:$PATH"
+   ```
+3. Restart your terminal or run: `source ~/.bashrc` (or `.zshrc`)
 
 ## License
 

@@ -14,9 +14,10 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "glm",
-	Short: "GLM Claude settings management CLI",
-	Long:  "A CLI tool to enable/disable GLM settings for Claude",
+	Use:     "glm",
+	Short:   "GLM Claude settings management CLI",
+	Long:    "A CLI tool to enable/disable GLM settings for Claude",
+	Version: "1.0.0",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return runDefaultAction()
 	},
