@@ -191,7 +191,7 @@ main() {
     if command -v glm >/dev/null 2>&1; then
         log_warning "GLM CLI is already installed"
         echo -n "Do you want to reinstall/update? (y/N): "
-        read -r response
+        read -r response </dev/tty
         if [[ ! "$response" =~ ^[Yy]$ ]]; then
             log_info "Installation cancelled"
             exit 0
