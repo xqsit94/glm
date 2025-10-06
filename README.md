@@ -5,7 +5,7 @@ A command-line interface for managing GLM (ChatGLM) settings with Claude Code, e
 ## Features
 
 - 🚀 **Enable/Disable GLM**: Quickly configure Claude to use GLM models
-- 🔧 **Model Management**: Switch between different GLM models (glm-4.5, glm-4.5-air, etc.)
+- 🔧 **Model Management**: Switch between different GLM models (glm-4.6, glm-4.5, glm-4.5-air, etc.)
 - 📦 **Auto-Install**: Install Claude Code with built-in npm dependency checking
 - ⚙️ **Easy Configuration**: Simple commands to manage your GLM settings
 
@@ -97,7 +97,7 @@ glm enable
 
 ### Enable GLM
 
-Enable GLM with the default model (glm-4.5):
+Enable GLM with the default model (glm-4.6):
 ```bash
 glm enable
 ```
@@ -169,7 +169,7 @@ glm install --help
 | Command | Description | Example |
 |---------|-------------|---------|
 | `glm` | Quick start (enable + run claude) | `glm` |
-| `glm enable` | Enable GLM settings for Claude | `glm enable --model glm-4.5` |
+| `glm enable` | Enable GLM settings for Claude | `glm enable --model glm-4.6` |
 | `glm disable` | Disable GLM settings | `glm disable` |
 | `glm set` | Change GLM model | `glm set --model glm-4.5-air` |
 | `glm install claude` | Install Claude Code | `glm install claude` |
@@ -179,7 +179,8 @@ glm install --help
 
 ## Available Models
 
-- `glm-4.5` (default)
+- `glm-4.6` (default)
+- `glm-4.5`
 - `glm-4.5-air`
 - Any other GLM model supported by BigModel API
 
@@ -211,8 +212,9 @@ glm enable
 glm  # Enables GLM and starts Claude in one command
 
 # Switch models as needed
-glm set --model glm-4.5-air
 glm set --model glm-4.5
+glm set --model glm-4.5-air
+glm set --model glm-4.6
 
 # When done
 glm disable

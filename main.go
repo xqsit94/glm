@@ -13,11 +13,13 @@ import (
 	"golang.org/x/term"
 )
 
+const defaultModel = "glm-4.6"
+
 var rootCmd = &cobra.Command{
 	Use:     "glm",
 	Short:   "GLM Claude settings management CLI",
 	Long:    "A CLI tool to enable/disable GLM settings for Claude",
-	Version: "1.0.0",
+	Version: "1.0.3",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return runDefaultAction()
 	},
@@ -104,7 +106,7 @@ var tokenClearCmd = &cobra.Command{
 }
 
 func init() {
-	enableCmd.Flags().StringP("model", "m", "glm-4.5", "GLM model to use (default: glm-4.5)")
+	enableCmd.Flags().StringP("model", "m", defaultModel, fmt.Sprintf("GLM model to use (default: %s)", defaultModel))
 	setCmd.Flags().StringP("model", "m", "", "GLM model to set (required)")
 	setCmd.MarkFlagRequired("model")
 
@@ -161,7 +163,6 @@ func disableGLM() error {
 		fmt.Println("Claude settings file not found.")
 	}
 
-
 	if entries, err := os.ReadDir(claudeDir); err == nil {
 		if len(entries) == 0 {
 			if err := os.Remove(claudeDir); err != nil {
@@ -176,7 +177,6 @@ func disableGLM() error {
 	fmt.Println("Cleanup completed.")
 	return nil
 }
-
 
 type ClaudeSettings struct {
 	Env struct {
@@ -210,7 +210,6 @@ func setGLMModel(model string) error {
 	}
 
 	settings.Env.AnthropicModel = model
-
 
 	updatedData, err := json.MarshalIndent(settings, "", "  ")
 	if err != nil {
@@ -323,7 +322,7 @@ func setAuthToken() error {
 
 	config.AnthropicAuthToken = tokenStr
 	if config.DefaultModel == "" {
-		config.DefaultModel = "glm-4.5"
+		config.DefaultModel = defaultModel
 	}
 
 	if err := saveConfig(config); err != nil {
@@ -382,7 +381,6 @@ func getAuthToken() (string, error) {
 		return config.AnthropicAuthToken, nil
 	}
 
-
 	fmt.Println("🔐 No authentication token found.")
 	fmt.Print("Would you like to set up your token now? (y/n): ")
 
@@ -399,12 +397,11 @@ func getAuthToken() (string, error) {
 	return "", fmt.Errorf("authentication token is required. Use 'glm token set' to configure it")
 }
 
-
 func runDefaultAction() error {
 	fmt.Println("🚀 Running default GLM action...")
 
 	fmt.Println("📝 Enabling GLM...")
-	if err := enableGLM("glm-4.5"); err != nil {
+	if err := enableGLM(defaultModel); err != nil {
 		return fmt.Errorf("failed to enable GLM: %v", err)
 	}
 
@@ -415,7 +412,6 @@ func runDefaultAction() error {
 		fmt.Println("💡 Run 'glm install claude' first to install Claude Code.")
 		return fmt.Errorf("claude command not found")
 	}
-
 
 	cmd := exec.Command("claude")
 	cmd.Stdin = os.Stdin
