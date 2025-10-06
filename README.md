@@ -13,22 +13,21 @@ A command-line interface for managing GLM (ChatGLM) settings with Claude Code, e
 
 ### Quick Install (Recommended)
 
-Install GLM CLI with a simple command:
+**Automatic Installer:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/xqsit94/glm/main/install.sh | bash
+```
 
+**Alternative - Manual Quick Install:**
 ```bash
 # Create user bin directory and download GLM CLI
 mkdir -p ~/.local/bin
-curl -L -o ~/.local/bin/glm "https://github.com/xqsit94/glm/releases/download/v1.0.2/glm-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed 's/x86_64/amd64/')"
+curl -L -o ~/.local/bin/glm "https://github.com/xqsit94/glm/releases/download/v1.0.3/glm-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed 's/x86_64/amd64/')"
 chmod +x ~/.local/bin/glm
 
 # Add to PATH (one-time setup)
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
-```
-
-**Alternative - Automatic Installer:**
-```bash
-curl -fsSL https://raw.githubusercontent.com/xqsit94/glm/main/install.sh | bash
 ```
 
 Both methods will:
