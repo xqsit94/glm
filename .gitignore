@@ -18,7 +18,7 @@
 go.work
 
 # Build output
-glm
+/glm
 glm_*
 dist/
 build/
