@@ -303,10 +303,27 @@ sudo glm update
 
 If you're upgrading from version 1.0.x:
 
+### ⚠️ IMPORTANT: Remove Old Configuration File
+
+**You MUST remove the old persistent configuration file to avoid conflicts:**
+
+```bash
+rm -f ~/.claude/settings.json
+```
+
+**Why this is required:**
+- Version 1.0.x created a persistent `~/.claude/settings.json` file that made Claude always use GLM settings
+- This conflicts with v1.1.0's session-based approach
+- **Without removing this file:** Running `claude` directly will still use GLM settings (not the default)
+- **After removing this file:**
+  - `glm` → Uses GLM settings (temporary, session-based)
+  - `claude` → Uses default Claude settings (no GLM)
+
+### Other Changes:
+
 1. **Deprecated commands**: `glm enable` and `glm disable` still work but show deprecation warnings
 2. **Removed command**: `glm set` has been removed - use `glm --model X` instead
-3. **No cleanup needed**: Old persistent settings in `~/.claude/settings.json` won't affect the new session-based approach
-4. **Optional cleanup**: You can manually remove `~/.claude/settings.json` if you want to clean up old persistent settings
+3. **New usage**: Just run `glm` to launch Claude with GLM, or `glm --model X` to specify a model
 
 ## License
 
