@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"glm/cmd"
+	"github.com/xqsit94/glm/cmd"
 )
 
 func main() {

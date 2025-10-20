@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"glm/internal/token"
+	"github.com/xqsit94/glm/internal/token"
 
 	"github.com/spf13/cobra"
 )

@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"glm/internal/glm"
-	"glm/internal/token"
+	"github.com/xqsit94/glm/internal/glm"
+	"github.com/xqsit94/glm/internal/token"
 
 	"github.com/spf13/cobra"
 )

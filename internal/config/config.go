@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"glm/pkg/paths"
+	"github.com/xqsit94/glm/pkg/paths"
 )
 
 type Config struct {
