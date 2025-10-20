@@ -24,18 +24,12 @@ jobs:
       with:
         go-version: '1.24'
 
-    - name: Verify Go modules
-      run: |
-        go mod tidy
-        go mod verify
-
     - name: Build binary
       env:
         GOOS: ${{ matrix.goos }}
         GOARCH: ${{ matrix.goarch }}
-        GO111MODULE: on
       run: |
-        go build -v -o glm-${{ matrix.goos }}-${{ matrix.goarch }} .
+        go build -o glm-${{ matrix.goos }}-${{ matrix.goarch }} .
 
     - name: Upload binary
       uses: actions/upload-artifact@v4
