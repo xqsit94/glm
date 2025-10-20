@@ -12,7 +12,6 @@ func main() {
 
 	rootCmd.AddCommand(cmd.EnableCmd())
 	rootCmd.AddCommand(cmd.DisableCmd())
-	rootCmd.AddCommand(cmd.SetCmd())
 	rootCmd.AddCommand(cmd.InstallCmd())
 	rootCmd.AddCommand(cmd.TokenCmd())
 	rootCmd.AddCommand(cmd.UpdateCmd())

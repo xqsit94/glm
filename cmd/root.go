@@ -5,7 +5,6 @@ import (
 	"os"
 	"os/exec"
 
-	"glm/internal/glm"
 	"glm/internal/token"
 
 	"github.com/spf13/cobra"
@@ -17,31 +16,30 @@ const (
 )
 
 func RootCmd() *cobra.Command {
-	return &cobra.Command{
+	var model string
+
+	cmd := &cobra.Command{
 		Use:     "glm",
 		Short:   "GLM Claude settings management CLI",
-		Long:    "A CLI tool to enable/disable GLM settings for Claude",
+		Long:    "A CLI tool to launch Claude with GLM settings using temporary session-based configuration",
 		Version: version,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runDefaultAction()
+			return runDefaultAction(model)
 		},
 	}
+
+	cmd.Flags().StringVarP(&model, "model", "m", defaultModel, "GLM model to use for this session")
+
+	return cmd
 }
 
-func runDefaultAction() error {
-	fmt.Println("🚀 Running default GLM action...")
+func runDefaultAction(model string) error {
+	fmt.Println("🚀 Launching Claude with GLM...")
 
 	authToken, err := token.Get()
 	if err != nil {
 		return fmt.Errorf("failed to get authentication token: %v", err)
 	}
-
-	fmt.Println("📝 Enabling GLM...")
-	if err := glm.Enable(defaultModel, authToken); err != nil {
-		return fmt.Errorf("failed to enable GLM: %v", err)
-	}
-
-	fmt.Println("🎯 Starting Claude Code...")
 
 	if _, err := exec.LookPath("claude"); err != nil {
 		fmt.Println("❌ Claude Code is not installed.")
@@ -49,10 +47,18 @@ func runDefaultAction() error {
 		return fmt.Errorf("claude command not found")
 	}
 
+	fmt.Printf("📝 Using model: %s\n", model)
+	fmt.Println("🎯 Starting Claude Code with temporary GLM configuration...")
+
 	cmd := exec.Command("claude")
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
+	cmd.Env = append(os.Environ(),
+		"ANTHROPIC_BASE_URL=https://open.bigmodel.cn/api/anthropic",
+		"ANTHROPIC_AUTH_TOKEN="+authToken,
+		"ANTHROPIC_MODEL="+model,
+	)
 
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("failed to run claude: %v", err)
