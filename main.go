@@ -15,6 +15,7 @@ func main() {
 	rootCmd.AddCommand(cmd.SetCmd())
 	rootCmd.AddCommand(cmd.InstallCmd())
 	rootCmd.AddCommand(cmd.TokenCmd())
+	rootCmd.AddCommand(cmd.UpdateCmd())
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
