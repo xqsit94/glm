@@ -1,13 +1,14 @@
 # GLM CLI
 
-A command-line interface for managing GLM (ChatGLM) settings with Claude Code, enabling easy switching between different GLM models via BigModel API.
+A command-line interface for launching Claude Code with GLM (ChatGLM) settings via BigModel API, using temporary session-based configuration.
 
 ## Features
 
-- 🚀 **Enable/Disable GLM**: Quickly configure Claude to use GLM models
-- 🔧 **Model Management**: Switch between different GLM models (glm-4.6, glm-4.5, glm-4.5-air, etc.)
+- 🚀 **Session-Based Launch**: Launch Claude with GLM settings temporarily (no persistent config changes)
+- 🎯 **Model Selection**: Choose different GLM models at launch time (glm-4.6, glm-4.5, glm-4.5-air, etc.)
 - 📦 **Auto-Install**: Install Claude Code with built-in npm dependency checking
-- ⚙️ **Easy Configuration**: Simple commands to manage your GLM settings
+- 🔄 **Auto-Update**: Check for and install updates with interactive update command
+- ⚙️ **Token Management**: Securely manage your authentication token
 
 ## Installation
 
@@ -22,7 +23,7 @@ curl -fsSL https://raw.githubusercontent.com/xqsit94/glm/main/install.sh | bash
 ```bash
 # Create user bin directory and download GLM CLI
 mkdir -p ~/.local/bin
-curl -L -o ~/.local/bin/glm "https://github.com/xqsit94/glm/releases/download/v1.0.3/glm-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed 's/x86_64/amd64/')"
+curl -L -o ~/.local/bin/glm "https://github.com/xqsit94/glm/releases/download/v1.1.0/glm-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed 's/x86_64/amd64/')"
 chmod +x ~/.local/bin/glm
 
 # Add to PATH (one-time setup)
@@ -73,7 +74,7 @@ The GLM CLI supports multiple ways to provide your Anthropic API token:
 ### Option 1: Interactive Setup (Recommended)
 On first run, the CLI will automatically prompt you to set up your token:
 ```bash
-glm enable  # Will prompt for token if not found
+glm  # Will prompt for token if not found
 ```
 
 ### Option 2: Manual Token Setup
@@ -84,7 +85,7 @@ glm token set  # Enter your token securely
 ### Option 3: Environment Variable
 ```bash
 export ANTHROPIC_AUTH_TOKEN="your_token_here"
-glm enable
+glm
 ```
 
 **Token Priority Order:**
@@ -94,33 +95,24 @@ glm enable
 
 ## Usage
 
-### Enable GLM
+### Launch Claude with GLM (Primary Usage)
 
-Enable GLM with the default model (glm-4.6):
+Launch Claude with the default model (glm-4.6):
 ```bash
-glm enable
+glm
 ```
 
-Enable GLM with a specific model:
+Launch Claude with a specific model:
 ```bash
-glm enable --model glm-4.5-air
-glm enable -m glm-4.5-air
+glm --model glm-4.5-air
+glm -m glm-4.5-air
 ```
 
-### Change Model
-
-Change the model when GLM is already enabled:
-```bash
-glm set --model glm-4.5-air
-glm set -m glm-4.5-air
-```
-
-### Disable GLM
-
-Remove GLM configuration and restore default Claude settings:
-```bash
-glm disable
-```
+**How it works:**
+- Sets temporary environment variables for the Claude session
+- No persistent changes to Claude's configuration files
+- Settings only apply to the launched Claude session
+- To use Claude without GLM, just run `claude` directly
 
 ### Install Claude Code
 
@@ -146,11 +138,21 @@ Clear stored token:
 glm token clear
 ```
 
-### Quick Start
+### Update GLM
 
-Run GLM with default settings (enables GLM and starts Claude):
+Check for updates:
 ```bash
-glm
+glm update --check
+```
+
+Update to latest version:
+```bash
+glm update
+```
+
+Update without confirmation:
+```bash
+glm update --force
 ```
 
 ### Help
@@ -158,23 +160,32 @@ glm
 Get help for any command:
 ```bash
 glm --help
-glm enable --help
-glm set --help
 glm install --help
+glm token --help
+glm update --help
 ```
 
 ## Commands Reference
 
 | Command | Description | Example |
 |---------|-------------|---------|
-| `glm` | Quick start (enable + run claude) | `glm` |
-| `glm enable` | Enable GLM settings for Claude | `glm enable --model glm-4.6` |
-| `glm disable` | Disable GLM settings | `glm disable` |
-| `glm set` | Change GLM model | `glm set --model glm-4.5-air` |
+| `glm` | Launch Claude with GLM (temporary config) | `glm --model glm-4.6` |
 | `glm install claude` | Install Claude Code | `glm install claude` |
 | `glm token set` | Set authentication token | `glm token set` |
 | `glm token show` | Show current token (masked) | `glm token show` |
 | `glm token clear` | Clear stored token | `glm token clear` |
+| `glm update` | Update GLM to latest version | `glm update` |
+| `glm update --check` | Check for updates only | `glm update --check` |
+
+### Deprecated Commands
+
+These commands still work but are deprecated. Use `glm` with `--model` flag instead:
+
+| Command | Status | Replacement |
+|---------|--------|-------------|
+| `glm enable` | ⚠️ Deprecated | Use `glm` instead |
+| `glm disable` | ⚠️ Deprecated | Run `claude` directly |
+| `glm set` | ❌ Removed | Use `glm --model X` |
 
 ## Available Models
 
@@ -186,15 +197,24 @@ glm install --help
 ## Configuration Files
 
 The CLI manages the following files:
-- `~/.claude/settings.json` - Claude configuration file
-- `~/.glm/config.json` - Your authentication token
+- `~/.glm/config.json` - Your authentication token and preferences
+
+**Note:** GLM no longer modifies `~/.claude/settings.json`. All configuration is passed via temporary environment variables.
 
 ## How It Works
 
-1. **Enable**: Creates/updates `~/.claude/settings.json` with BigModel API configuration
-2. **Disable**: Removes the settings file and cleans up empty directories
-3. **Set**: Updates the model in existing configuration without re-authentication
-4. **Install**: Checks for npm and installs Claude Code globally
+1. **Launch (`glm`)**: Launches Claude Code with temporary environment variables:
+   - `ANTHROPIC_BASE_URL=https://open.bigmodel.cn/api/anthropic`
+   - `ANTHROPIC_AUTH_TOKEN=<your_token>`
+   - `ANTHROPIC_MODEL=<selected_model>`
+
+2. **Session-Based**: Settings only exist for the launched Claude session. No persistent file modifications.
+
+3. **Token Storage**: Your authentication token is securely stored in `~/.glm/config.json` for convenience.
+
+4. **Install**: Checks for npm and installs Claude Code globally.
+
+5. **Update**: Downloads and replaces the GLM binary with the latest version from GitHub.
 
 ## Example Workflow
 
@@ -203,20 +223,23 @@ The CLI manages the following files:
 curl -fsSL https://raw.githubusercontent.com/xqsit94/glm/main/install.sh | bash
 
 # First time setup
-glm install claude
-glm token set  # Enter your token securely
-glm enable
+glm install claude        # Install Claude Code
+glm token set            # Enter your token securely
 
-# Or use the quick start
-glm  # Enables GLM and starts Claude in one command
+# Launch Claude with GLM (default model: glm-4.6)
+glm
 
-# Switch models as needed
-glm set --model glm-4.5
-glm set --model glm-4.5-air
-glm set --model glm-4.6
+# Launch with specific model
+glm --model glm-4.5-air
 
-# When done
-glm disable
+# Use Claude without GLM
+claude
+
+# Check for updates
+glm update --check
+
+# Update to latest version
+glm update
 ```
 
 ## Troubleshooting
@@ -255,20 +278,35 @@ Set up your token using any of these methods:
 - `glm token set` (recommended)
 - Set environment variable: `export ANTHROPIC_AUTH_TOKEN="your_token"`
 
-#### Settings not taking effect
-Try:
-1. Restart your Claude Code session
-2. Verify the settings file exists: `cat ~/.claude/settings.json`
-3. Re-enable GLM: `glm disable && glm enable`
+#### Claude still using default settings
+The session-based configuration means:
+- Settings only apply to Claude sessions launched via `glm`
+- If you run `claude` directly, it uses default settings
+- This is intentional - use `glm` to launch with GLM settings
 
 #### Command not found after installation
 If `glm` command is not found after installation:
-1. Check if `/usr/local/bin` is in your PATH: `echo $PATH`
+1. Check if `/usr/local/bin` or `~/.local/bin` is in your PATH: `echo $PATH`
 2. Add to PATH if missing (add to `.bashrc`, `.zshrc`, etc.):
    ```bash
-   export PATH="/usr/local/bin:$PATH"
+   export PATH="$HOME/.local/bin:$PATH"
    ```
 3. Restart your terminal or run: `source ~/.bashrc` (or `.zshrc`)
+
+#### Update fails with permission error
+If `glm update` fails with permission denied:
+```bash
+sudo glm update
+```
+
+## Migration from Previous Versions
+
+If you're upgrading from version 1.0.x:
+
+1. **Deprecated commands**: `glm enable` and `glm disable` still work but show deprecation warnings
+2. **Removed command**: `glm set` has been removed - use `glm --model X` instead
+3. **No cleanup needed**: Old persistent settings in `~/.claude/settings.json` won't affect the new session-based approach
+4. **Optional cleanup**: You can manually remove `~/.claude/settings.json` if you want to clean up old persistent settings
 
 ## License
 
