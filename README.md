@@ -5,7 +5,7 @@ A command-line interface for launching Claude Code with GLM (ChatGLM) settings v
 ## Features
 
 - 🚀 **Session-Based Launch**: Launch Claude with GLM settings temporarily (no persistent config changes)
-- 🎯 **Model Selection**: Choose different GLM models at launch time (glm-4.6, glm-4.5, glm-4.5-air, etc.)
+- 🎯 **Model Selection**: Choose different GLM models at launch time (glm-4.7, glm-4.6, glm-4.5, glm-4.5-air, etc.)
 - 📦 **Auto-Install**: Install Claude Code with built-in npm dependency checking
 - 🔄 **Auto-Update**: Check for and install updates with interactive update command
 - ⚙️ **Token Management**: Securely manage your authentication token
@@ -97,7 +97,7 @@ glm
 
 ### Launch Claude with GLM (Primary Usage)
 
-Launch Claude with the default model (glm-4.6):
+Launch Claude with the default model (glm-4.7):
 ```bash
 glm
 ```
@@ -169,7 +169,7 @@ glm update --help
 
 | Command | Description | Example |
 |---------|-------------|---------|
-| `glm` | Launch Claude with GLM (temporary config) | `glm --model glm-4.6` |
+| `glm` | Launch Claude with GLM (temporary config) | `glm --model glm-4.7` |
 | `glm install claude` | Install Claude Code | `glm install claude` |
 | `glm token set` | Set authentication token | `glm token set` |
 | `glm token show` | Show current token (masked) | `glm token show` |
@@ -189,7 +189,8 @@ These commands still work but are deprecated. Use `glm` with `--model` flag inst
 
 ## Available Models
 
-- `glm-4.6` (default)
+- `glm-4.7` (default)
+- `glm-4.6`
 - `glm-4.5`
 - `glm-4.5-air`
 - Any other GLM model supported by BigModel API
@@ -226,7 +227,7 @@ curl -fsSL https://raw.githubusercontent.com/xqsit94/glm/main/install.sh | bash
 glm install claude        # Install Claude Code
 glm token set            # Enter your token securely
 
-# Launch Claude with GLM (default model: glm-4.6)
+# Launch Claude with GLM (default model: glm-4.7)
 glm
 
 # Launch with specific model

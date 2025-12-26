@@ -12,7 +12,7 @@ import (
 	"golang.org/x/term"
 )
 
-const defaultModel = "glm-4.6"
+const DefaultModel = "glm-4.7"
 
 func Get() (string, error) {
 	if token := os.Getenv("ANTHROPIC_AUTH_TOKEN"); token != "" {
@@ -64,7 +64,7 @@ func Set() error {
 
 	cfg.AnthropicAuthToken = tokenStr
 	if cfg.DefaultModel == "" {
-		cfg.DefaultModel = defaultModel
+		cfg.DefaultModel = DefaultModel
 	}
 
 	if err := config.Save(cfg); err != nil {

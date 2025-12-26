@@ -11,8 +11,7 @@ import (
 )
 
 const (
-	version      = "1.1.0"
-	defaultModel = "glm-4.6"
+	version = "1.1.1"
 )
 
 func RootCmd() *cobra.Command {
@@ -28,7 +27,7 @@ func RootCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&model, "model", "m", defaultModel, "GLM model to use for this session")
+	cmd.Flags().StringVarP(&model, "model", "m", token.DefaultModel, "GLM model to use for this session")
 
 	return cmd
 }

@@ -31,7 +31,7 @@ func EnableCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringP("model", "m", defaultModel, fmt.Sprintf("GLM model to use (default: %s)", defaultModel))
+	cmd.Flags().StringP("model", "m", token.DefaultModel, fmt.Sprintf("GLM model to use (default: %s)", token.DefaultModel))
 
 	return cmd
 }
