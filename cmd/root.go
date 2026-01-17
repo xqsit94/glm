@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 
+	"github.com/spf13/pflag"
 	"github.com/xqsit94/glm/internal/token"
 
 	"github.com/spf13/cobra"
@@ -23,16 +25,73 @@ func RootCmd() *cobra.Command {
 		Long:    "A CLI tool to launch Claude with GLM settings using temporary session-based configuration",
 		Version: version,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runDefaultAction(model)
+			return runDefaultAction(cmd, model)
 		},
 	}
 
 	cmd.Flags().StringVarP(&model, "model", "m", token.DefaultModel, "GLM model to use for this session")
 
+	// Allow unknown flags to be passed through to claude
+	cmd.FParseErrWhitelist.UnknownFlags = true
+
 	return cmd
 }
 
-func runDefaultAction(model string) error {
+// extractUnknownFlags extracts flags from os.Args that are not known to glm
+// This allows passthrough of arbitrary flags to the claude command
+func extractUnknownFlags(cmd *cobra.Command) []string {
+	knownFlags := make(map[string]bool)
+	cmd.Flags().VisitAll(func(f *pflag.Flag) {
+		knownFlags["--"+f.Name] = true
+		if f.Shorthand != "" {
+			knownFlags["-"+f.Shorthand] = true
+		}
+	})
+
+	var unknown []string
+	args := os.Args[1:] // Skip program name
+
+	skipNext := false
+	for i, arg := range args {
+		if skipNext {
+			skipNext = false
+			continue
+		}
+
+		// Skip if it's a known flag
+		if knownFlags[arg] {
+			// Also skip the next arg if it's a flag value (not starting with -)
+			if i+1 < len(args) && !strings.HasPrefix(args[i+1], "-") {
+				skipNext = true
+			}
+			continue
+		}
+
+		// Handle --flag=value format
+		if strings.HasPrefix(arg, "--") {
+			if idx := strings.Index(arg, "="); idx != -1 {
+				flagName := arg[:idx]
+				if !knownFlags[flagName] {
+					unknown = append(unknown, arg)
+				}
+				continue
+			}
+		}
+
+		// If it starts with -, it's a flag (and we don't know it)
+		if strings.HasPrefix(arg, "-") {
+			unknown = append(unknown, arg)
+			// Also skip the next arg if it's a flag value (not starting with -)
+			if i+1 < len(args) && !strings.HasPrefix(args[i+1], "-") {
+				skipNext = true
+			}
+		}
+	}
+
+	return unknown
+}
+
+func runDefaultAction(cmd *cobra.Command, model string) error {
 	fmt.Println("🚀 Launching Claude with GLM...")
 
 	authToken, err := token.Get()
@@ -49,17 +108,22 @@ func runDefaultAction(model string) error {
 	fmt.Printf("📝 Using model: %s\n", model)
 	fmt.Println("🎯 Starting Claude Code with temporary GLM configuration...")
 
-	cmd := exec.Command("claude")
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Env = append(os.Environ(),
+	// Build claude command with passthrough flags
+	cmdArgs := []string{"claude"}
+	unknownFlags := extractUnknownFlags(cmd)
+	cmdArgs = append(cmdArgs, unknownFlags...)
+
+	claudeCmd := exec.Command(cmdArgs[0], cmdArgs[1:]...)
+	claudeCmd.Stdin = os.Stdin
+	claudeCmd.Stdout = os.Stdout
+	claudeCmd.Stderr = os.Stderr
+	claudeCmd.Env = append(os.Environ(),
 		"ANTHROPIC_BASE_URL=https://open.bigmodel.cn/api/anthropic",
 		"ANTHROPIC_AUTH_TOKEN="+authToken,
 		"ANTHROPIC_MODEL="+model,
 	)
 
-	if err := cmd.Run(); err != nil {
+	if err := claudeCmd.Run(); err != nil {
 		return fmt.Errorf("failed to run claude: %v", err)
 	}
 
