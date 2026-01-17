@@ -108,8 +108,10 @@ func runDefaultAction(cmd *cobra.Command, model string) error {
 	fmt.Printf("📝 Using model: %s\n", model)
 	fmt.Println("🎯 Starting Claude Code with temporary GLM configuration...")
 
-	// Build claude command with passthrough flags
-	cmdArgs := []string{"claude"}
+	// Build claude command with explicit model to override settings.json
+	// This prevents extended thinking modes (like opusplan) from being used
+	// with GLM API which doesn't support thinking blocks
+	cmdArgs := []string{"claude", "--model", model}
 	unknownFlags := extractUnknownFlags(cmd)
 	cmdArgs = append(cmdArgs, unknownFlags...)
 
