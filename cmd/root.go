@@ -18,6 +18,7 @@ const (
 
 func RootCmd() *cobra.Command {
 	var model string
+	var yolo bool
 
 	cmd := &cobra.Command{
 		Use:     "glm",
@@ -25,11 +26,12 @@ func RootCmd() *cobra.Command {
 		Long:    "A CLI tool to launch Claude with GLM settings using temporary session-based configuration",
 		Version: version,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runDefaultAction(cmd, model)
+			return runDefaultAction(cmd, model, yolo)
 		},
 	}
 
 	cmd.Flags().StringVarP(&model, "model", "m", token.DefaultModel, "GLM model to use for this session")
+	cmd.Flags().BoolVar(&yolo, "yolo", false, "Skip permission prompts (--dangerously-skip-permissions)")
 
 	// Allow unknown flags to be passed through to claude
 	cmd.FParseErrWhitelist.UnknownFlags = true
@@ -91,7 +93,7 @@ func extractUnknownFlags(cmd *cobra.Command) []string {
 	return unknown
 }
 
-func runDefaultAction(cmd *cobra.Command, model string) error {
+func runDefaultAction(cmd *cobra.Command, model string, yolo bool) error {
 	fmt.Println("🚀 Launching Claude with GLM...")
 
 	authToken, err := token.Get()
@@ -112,6 +114,9 @@ func runDefaultAction(cmd *cobra.Command, model string) error {
 	// This prevents extended thinking modes (like opusplan) from being used
 	// with GLM API which doesn't support thinking blocks
 	cmdArgs := []string{"claude", "--model", model}
+	if yolo {
+		cmdArgs = append(cmdArgs, "--dangerously-skip-permissions")
+	}
 	unknownFlags := extractUnknownFlags(cmd)
 	cmdArgs = append(cmdArgs, unknownFlags...)
 
