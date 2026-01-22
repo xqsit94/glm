@@ -85,6 +85,7 @@ func extractUnknownFlags(cmd *cobra.Command) []string {
 			unknown = append(unknown, arg)
 			// Also skip the next arg if it's a flag value (not starting with -)
 			if i+1 < len(args) && !strings.HasPrefix(args[i+1], "-") {
+				unknown = append(unknown, args[i+1]) // Add the value too
 				skipNext = true
 			}
 		}
