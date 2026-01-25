@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	version = "1.1.1"
+	version = "1.2.0"
 )
 
 func RootCmd() *cobra.Command {
@@ -32,8 +32,6 @@ func RootCmd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&model, "model", "m", token.DefaultModel, "GLM model to use for this session")
 	cmd.Flags().BoolVar(&yolo, "yolo", false, "Skip permission prompts (--dangerously-skip-permissions)")
-
-	// Allow unknown flags to be passed through to claude
 	cmd.FParseErrWhitelist.UnknownFlags = true
 
 	return cmd
@@ -51,7 +49,7 @@ func extractUnknownFlags(cmd *cobra.Command) []string {
 	})
 
 	var unknown []string
-	args := os.Args[1:] // Skip program name
+	args := os.Args[1:]
 
 	skipNext := false
 	for i, arg := range args {
@@ -60,16 +58,13 @@ func extractUnknownFlags(cmd *cobra.Command) []string {
 			continue
 		}
 
-		// Skip if it's a known flag
 		if knownFlags[arg] {
-			// Also skip the next arg if it's a flag value (not starting with -)
 			if i+1 < len(args) && !strings.HasPrefix(args[i+1], "-") {
 				skipNext = true
 			}
 			continue
 		}
 
-		// Handle --flag=value format
 		if strings.HasPrefix(arg, "--") {
 			if idx := strings.Index(arg, "="); idx != -1 {
 				flagName := arg[:idx]
@@ -80,12 +75,10 @@ func extractUnknownFlags(cmd *cobra.Command) []string {
 			}
 		}
 
-		// If it starts with -, it's a flag (and we don't know it)
 		if strings.HasPrefix(arg, "-") {
 			unknown = append(unknown, arg)
-			// Also skip the next arg if it's a flag value (not starting with -)
 			if i+1 < len(args) && !strings.HasPrefix(args[i+1], "-") {
-				unknown = append(unknown, args[i+1]) // Add the value too
+				unknown = append(unknown, args[i+1])
 				skipNext = true
 			}
 		}
@@ -111,9 +104,6 @@ func runDefaultAction(cmd *cobra.Command, model string, yolo bool) error {
 	fmt.Printf("📝 Using model: %s\n", model)
 	fmt.Println("🎯 Starting Claude Code with temporary GLM configuration...")
 
-	// Build claude command with explicit model to override settings.json
-	// This prevents extended thinking modes (like opusplan) from being used
-	// with GLM API which doesn't support thinking blocks
 	cmdArgs := []string{"claude", "--model", model}
 	if yolo {
 		cmdArgs = append(cmdArgs, "--dangerously-skip-permissions")
