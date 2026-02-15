@@ -16,6 +16,7 @@ const (
 
 func RootCmd() *cobra.Command {
 	var model string
+	var yolo bool
 
 	cmd := &cobra.Command{
 		Use:     "glm",
@@ -23,16 +24,17 @@ func RootCmd() *cobra.Command {
 		Long:    "A CLI tool to launch Claude with GLM settings using temporary session-based configuration",
 		Version: version,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runDefaultAction(model)
+			return runDefaultAction(model, yolo)
 		},
 	}
 
 	cmd.Flags().StringVarP(&model, "model", "m", token.DefaultModel, "GLM model to use for this session")
+	cmd.Flags().BoolVar(&yolo, "yolo", false, "Skip permission prompts (--dangerously-skip-permissions)")
 
 	return cmd
 }
 
-func runDefaultAction(model string) error {
+func runDefaultAction(model string, yolo bool) error {
 	fmt.Println("🚀 Launching Claude with GLM...")
 
 	authToken, err := token.Get()
@@ -49,7 +51,14 @@ func runDefaultAction(model string) error {
 	fmt.Printf("📝 Using model: %s\n", model)
 	fmt.Println("🎯 Starting Claude Code with temporary GLM configuration...")
 
-	cmd := exec.Command("claude")
+	args := []string{"--model", model}
+
+	// Append passthrough flags
+	if yolo {
+		args = append(args, "--dangerously-skip-permissions")
+	}
+
+	cmd := exec.Command("claude", args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
