@@ -5,7 +5,7 @@ A command-line interface for launching Claude Code with GLM (ChatGLM) settings v
 ## Features
 
 - 🚀 **Session-Based Launch**: Launch Claude with GLM settings temporarily (no persistent config changes)
-- 🎯 **Model Selection**: Choose different GLM models at launch time (glm-5, glm-4.7, glm-4.6, glm-4.5, glm-4.5-air, etc.)
+- 🎯 **Model Selection**: Choose different GLM models at launch time (glm-5.1, glm-5, glm-4.7, glm-4.6, glm-4.5, glm-4.5-air, etc.)
 - 🔀 **Flag Passthrough**: Pass any claude CLI flags directly through glm (e.g., `--allowedTools`, `--verbose`)
 - ⚡ **YOLO Mode**: Skip permission prompts with `--yolo` flag for faster workflows
 - 📦 **Auto-Install**: Install Claude Code with built-in npm dependency checking
@@ -99,7 +99,7 @@ glm
 
 ### Launch Claude with GLM (Primary Usage)
 
-Launch Claude with the default model (glm-5):
+Launch Claude with the default model (glm-5.1):
 ```bash
 glm
 ```
@@ -184,7 +184,7 @@ glm update --help
 
 | Command | Description | Example |
 |---------|-------------|---------|
-| `glm` | Launch Claude with GLM (temporary config) | `glm --model glm-5` |
+| `glm` | Launch Claude with GLM (temporary config) | `glm --model glm-5.1` |
 | `glm --yolo` | Launch with permission prompts skipped | `glm --yolo` |
 | `glm --<flag>` | Pass any flag through to claude | `glm --allowedTools "Bash"` |
 | `glm install claude` | Install Claude Code | `glm install claude` |
@@ -206,7 +206,8 @@ These commands still work but are deprecated. Use `glm` with `--model` flag inst
 
 ## Available Models
 
-- `glm-5` (default)
+- `glm-5.1` (default)
+- `glm-5`
 - `glm-4.7`
 - `glm-4.6`
 - `glm-4.5`
@@ -245,7 +246,7 @@ curl -fsSL https://raw.githubusercontent.com/xqsit94/glm/main/install.sh | bash
 glm install claude        # Install Claude Code
 glm token set            # Enter your token securely
 
-# Launch Claude with GLM (default model: glm-5)
+# Launch Claude with GLM (default model: glm-5.1)
 glm
 
 # Launch with specific model
