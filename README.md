@@ -99,7 +99,7 @@ glm
 
 ### Launch Claude with GLM (Primary Usage)
 
-Launch Claude with the default model (glm-5):
+Launch Claude with the default model (glm-5.1):
 ```bash
 glm
 ```
@@ -206,7 +206,7 @@ These commands still work but are deprecated. Use `glm` with `--model` flag inst
 
 ## Available Models
 
-- `glm-5` (default)
+- `glm-5.1` (default)
 - `glm-4.7`
 - `glm-4.6`
 - `glm-4.5`
@@ -245,7 +245,7 @@ curl -fsSL https://raw.githubusercontent.com/xqsit94/glm/main/install.sh | bash
 glm install claude        # Install Claude Code
 glm token set            # Enter your token securely
 
-# Launch Claude with GLM (default model: glm-5)
+# Launch Claude with GLM (default model: glm-5.1)
 glm
 
 # Launch with specific model

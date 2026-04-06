@@ -12,7 +12,7 @@ import (
 	"golang.org/x/term"
 )
 
-const DefaultModel = "glm-5"
+const DefaultModel = "glm-5.1"
 
 func Get() (string, error) {
 	if token := os.Getenv("ANTHROPIC_AUTH_TOKEN"); token != "" {
