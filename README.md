@@ -5,12 +5,14 @@ A command-line interface for launching Claude Code with GLM (ChatGLM) settings v
 ## Features
 
 - 🚀 **Session-Based Launch**: Launch Claude with GLM settings temporarily (no persistent config changes)
-- 🎯 **Model Selection**: Choose different GLM models at launch time (glm-5, glm-4.7, glm-4.6, glm-4.5, glm-4.5-air, etc.)
+- 🎯 **Model Selection**: Choose different GLM models at launch time (glm-5.1, glm-5, glm-4.7, glm-4.6, glm-4.5, glm-4.5-air, etc.)
 - 🔀 **Flag Passthrough**: Pass any claude CLI flags directly through glm (e.g., `--allowedTools`, `--verbose`)
 - ⚡ **YOLO Mode**: Skip permission prompts with `--yolo` flag for faster workflows
 - 📦 **Auto-Install**: Install Claude Code with built-in npm dependency checking
-- 🔄 **Auto-Update**: Check for and install updates with interactive update command
+- 🔄 **Auto-Update**: Check for and install updates with SHA256 checksum verification
 - ⚙️ **Token Management**: Securely manage your authentication token
+- 📋 **Model Listing**: View all available GLM models with `glm models`
+- 🛠️ **Configuration Management**: View, set, and reset GLM settings with `glm config`
 
 ## Installation
 
@@ -18,14 +20,14 @@ A command-line interface for launching Claude Code with GLM (ChatGLM) settings v
 
 **Automatic Installer:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/xqsit94/glm/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/rodrigorodrigo/glm/main/install.sh | bash
 ```
 
 **Alternative - Manual Quick Install:**
 ```bash
 # Create user bin directory and download GLM CLI
 mkdir -p ~/.local/bin
-curl -L -o ~/.local/bin/glm "https://github.com/xqsit94/glm/releases/download/v1.2.0/glm-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed 's/x86_64/amd64/')"
+curl -L -o ~/.local/bin/glm "https://github.com/rodrigorodrigo/glm/releases/download/v1.4.0/glm-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed 's/x86_64/amd64/')"
 chmod +x ~/.local/bin/glm
 
 # Add to PATH (one-time setup)
@@ -43,7 +45,7 @@ Both methods will:
 
 #### Option 1: Download Pre-built Binary
 
-1. Go to the [releases page](https://github.com/xqsit94/glm/releases)
+1. Go to the [releases page](https://github.com/rodrigorodrigo/glm/releases)
 2. Download the binary for your platform:
    - macOS Intel: `glm-darwin-amd64`
    - macOS Apple Silicon: `glm-darwin-arm64`
@@ -62,7 +64,7 @@ Both methods will:
 - Your GLM API token
 
 ```bash
-git clone https://github.com/xqsit94/glm.git
+git clone https://github.com/rodrigorodrigo/glm.git
 cd glm
 go mod tidy
 go build -o glm
@@ -81,7 +83,8 @@ glm  # Will prompt for token if not found
 
 ### Option 2: Manual Token Setup
 ```bash
-glm token set  # Enter your token securely
+glm token set              # Enter your token interactively
+glm token set --token "X"  # Non-interactive (scripts, CI)
 ```
 
 ### Option 3: Environment Variable
@@ -99,7 +102,7 @@ glm
 
 ### Launch Claude with GLM (Primary Usage)
 
-Launch Claude with the default model (glm-5):
+Launch Claude with the default model (glm-5.1):
 ```bash
 glm
 ```
@@ -129,6 +132,41 @@ glm --yolo --allowedTools "Bash,Read"
 - Settings only apply to the launched Claude session
 - To use Claude without GLM, just run `claude` directly
 
+### List Available Models
+
+```bash
+glm models
+```
+
+Displays all available GLM models with the current default marked.
+
+### Configuration Management
+
+View current configuration:
+```bash
+glm config show
+```
+
+Change the default model:
+```bash
+glm config set --model glm-4.5-air
+```
+
+Change the API base URL:
+```bash
+glm config set --base-url https://custom.api.endpoint/v1
+```
+
+Change the authentication token:
+```bash
+glm config set --token "your_token_here"
+```
+
+Reset all settings to defaults:
+```bash
+glm config reset
+```
+
 ### Install Claude Code
 
 Install Claude Code via npm (with automatic Node.js detection):
@@ -141,6 +179,7 @@ glm install claude
 Set your API token:
 ```bash
 glm token set
+glm token set --token "your_token"  # Non-interactive
 ```
 
 View current token (masked):
@@ -175,7 +214,8 @@ glm update --force
 Get help for any command:
 ```bash
 glm --help
-glm install --help
+glm models --help
+glm config --help
 glm token --help
 glm update --help
 ```
@@ -187,26 +227,21 @@ glm update --help
 | `glm` | Launch Claude with GLM (temporary config) | `glm --model glm-5` |
 | `glm --yolo` | Launch with permission prompts skipped | `glm --yolo` |
 | `glm --<flag>` | Pass any flag through to claude | `glm --allowedTools "Bash"` |
+| `glm models` | List available GLM models | `glm models` |
+| `glm config show` | Show current configuration | `glm config show` |
+| `glm config set` | Set configuration values | `glm config set --model glm-5` |
+| `glm config reset` | Reset config to defaults | `glm config reset` |
 | `glm install claude` | Install Claude Code | `glm install claude` |
-| `glm token set` | Set authentication token | `glm token set` |
+| `glm token set` | Set authentication token | `glm token set --token "X"` |
 | `glm token show` | Show current token (masked) | `glm token show` |
 | `glm token clear` | Clear stored token | `glm token clear` |
 | `glm update` | Update GLM to latest version | `glm update` |
 | `glm update --check` | Check for updates only | `glm update --check` |
 
-### Deprecated Commands
-
-These commands still work but are deprecated. Use `glm` with `--model` flag instead:
-
-| Command | Status | Replacement |
-|---------|--------|-------------|
-| `glm enable` | ⚠️ Deprecated | Use `glm` instead |
-| `glm disable` | ⚠️ Deprecated | Run `claude` directly |
-| `glm set` | ❌ Removed | Use `glm --model X` |
-
 ## Available Models
 
-- `glm-5` (default)
+- `glm-5.1` (default)
+- `glm-5`
 - `glm-4.7`
 - `glm-4.6`
 - `glm-4.5`
@@ -216,7 +251,7 @@ These commands still work but are deprecated. Use `glm` with `--model` flag inst
 ## Configuration Files
 
 The CLI manages the following files:
-- `~/.glm/config.json` - Your authentication token and preferences
+- `~/.glm/config.json` - Your authentication token, default model, and preferences
 
 **Note:** GLM no longer modifies `~/.claude/settings.json`. All configuration is passed via temporary environment variables.
 
@@ -233,19 +268,22 @@ The CLI manages the following files:
 
 4. **Install**: Checks for npm and installs Claude Code globally.
 
-5. **Update**: Downloads and replaces the GLM binary with the latest version from GitHub.
+5. **Update**: Downloads and replaces the GLM binary with the latest version from GitHub, with SHA256 checksum verification.
 
 ## Example Workflow
 
 ```bash
 # Install GLM CLI
-curl -fsSL https://raw.githubusercontent.com/xqsit94/glm/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/rodrigorodrigo/glm/main/install.sh | bash
 
 # First time setup
 glm install claude        # Install Claude Code
 glm token set            # Enter your token securely
 
-# Launch Claude with GLM (default model: glm-5)
+# Check available models
+glm models
+
+# Launch Claude with GLM (default model: glm-5.1)
 glm
 
 # Launch with specific model
@@ -256,6 +294,12 @@ glm --yolo
 
 # Pass additional flags to claude
 glm --allowedTools "Bash,Read,Write"
+
+# Change your default model
+glm config set --model glm-5
+
+# View current configuration
+glm config show
 
 # Use Claude without GLM
 claude
@@ -280,14 +324,14 @@ If you get a "curl not found" error:
 If the installer fails with permission errors:
 ```bash
 # Download and run manually with explicit sudo
-curl -fsSL https://raw.githubusercontent.com/xqsit94/glm/main/install.sh -o install.sh
+curl -fsSL https://raw.githubusercontent.com/rodrigorodrigo/glm/main/install.sh -o install.sh
 chmod +x install.sh
 sudo ./install.sh
 ```
 
 #### Binary not found for your platform
 If no binary is available for your platform:
-1. Check the [releases page](https://github.com/xqsit94/glm/releases) for available binaries
+1. Check the [releases page](https://github.com/rodrigorodrigo/glm/releases) for available binaries
 2. Build from source using the manual installation instructions
 
 ### Runtime Issues
@@ -326,7 +370,7 @@ sudo glm update
 
 ## Migration from Previous Versions
 
-If you're upgrading from version 1.0.x:
+If you're upgrading from version 1.0.x or 1.2.x:
 
 ### ⚠️ IMPORTANT: Remove Old Configuration File
 
@@ -338,17 +382,53 @@ rm -f ~/.claude/settings.json
 
 **Why this is required:**
 - Version 1.0.x created a persistent `~/.claude/settings.json` file that made Claude always use GLM settings
-- This conflicts with v1.1.0's session-based approach
+- This conflicts with the current session-based approach
 - **Without removing this file:** Running `claude` directly will still use GLM settings (not the default)
 - **After removing this file:**
   - `glm` → Uses GLM settings (temporary, session-based)
   - `claude` → Uses default Claude settings (no GLM)
 
-### Other Changes:
+### Changes in v1.4.0:
 
-1. **Deprecated commands**: `glm enable` and `glm disable` still work but show deprecation warnings
-2. **Removed command**: `glm set` has been removed - use `glm --model X` instead
-3. **New usage**: Just run `glm` to launch Claude with GLM, or `glm --model X` to specify a model
+1. **Removed commands**: `glm enable` and `glm disable` have been removed — use `glm` to launch and `claude` directly for non-GLM usage
+2. **New commands**: `glm models`, `glm config show/set/reset`
+3. **Non-interactive token**: `glm token set --token "X"` for scripts and CI
+4. **Checksum verification**: Update downloads are verified with SHA256
+
+## Changelog
+
+### v1.4.0
+
+#### 🚨 Breaking Changes
+- **Module path changed** from `xqsit94/glm` to `rodrigorodrigo/glm`
+- **Deprecated commands removed**: `glm enable` and `glm disable` no longer exist
+
+#### ✨ New Features
+- **`glm models`** — List all available GLM models with the current default highlighted
+- **`glm config show`** — View current configuration (model, base URL, token status)
+- **`glm config set`** — Change default model (`--model`), API base URL (`--base-url`), or token (`--token`)
+- **`glm config reset`** — Reset all configuration to default values
+- **Non-interactive token setting** — `glm token set --token "X"` for use in scripts and CI pipelines
+- **SHA256 checksum verification** — Binary downloads during `glm update` are verified against checksums
+
+#### 🐛 Fixes
+- Updater now points to the correct fork repository (`rodrigorodrigo/glm`)
+- All GitHub URLs updated to the correct repository
+
+#### 📦 Internal
+- Go module path updated to `rodrigorodrigo/glm`
+- Removed deprecated enable/disable command code
+
+### v1.2.1
+- Default model changed to `glm-5.1`
+
+### v1.2.0
+- Flag passthrough support
+- YOLO mode
+
+### v1.1.0
+- Session-based launch (no persistent config changes)
+- Token management commands
 
 ## License
 
@@ -364,4 +444,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Support
 
-For issues and feature requests, please create an issue in the repository.
+For issues and feature requests, please create an issue in the [repository](https://github.com/rodrigorodrigo/glm/issues).

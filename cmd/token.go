@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/xqsit94/glm/internal/token"
+	"github.com/rodrigorodrigo/glm/internal/token"
 
 	"github.com/spf13/cobra"
 )
@@ -21,14 +21,23 @@ func TokenCmd() *cobra.Command {
 }
 
 func tokenSetCmd() *cobra.Command {
-	return &cobra.Command{
+	var tokenValue string
+
+	cmd := &cobra.Command{
 		Use:   "set",
 		Short: "Set authentication token",
-		Long:  "Set your Anthropic authentication token interactively",
+		Long:  "Set your Anthropic authentication token interactively or via --token flag",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if tokenValue != "" {
+				return token.SetNonInteractive(tokenValue)
+			}
 			return token.Set()
 		},
 	}
+
+	cmd.Flags().StringVar(&tokenValue, "token", "", "Authentication token (non-interactive)")
+
+	return cmd
 }
 
 func tokenShowCmd() *cobra.Command {

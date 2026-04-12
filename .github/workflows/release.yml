@@ -31,11 +31,17 @@ jobs:
       run: |
         go build -o glm-${{ matrix.goos }}-${{ matrix.goarch }} .
 
-    - name: Upload binary
+    - name: Generate checksum
+      run: |
+        sha256sum glm-${{ matrix.goos }}-${{ matrix.goarch }} > glm-${{ matrix.goos }}-${{ matrix.goarch }}.sha256
+
+    - name: Upload binary and checksum
       uses: actions/upload-artifact@v4
       with:
         name: glm-${{ matrix.goos }}-${{ matrix.goarch }}
-        path: glm-${{ matrix.goos }}-${{ matrix.goarch }}
+        path: |
+          glm-${{ matrix.goos }}-${{ matrix.goarch }}
+          glm-${{ matrix.goos }}-${{ matrix.goarch }}.sha256
 
   release:
     name: Create release
@@ -52,9 +58,13 @@ jobs:
       with:
         files: |
           glm-darwin-amd64/glm-darwin-amd64
+          glm-darwin-amd64/glm-darwin-amd64.sha256
           glm-darwin-arm64/glm-darwin-arm64
+          glm-darwin-arm64/glm-darwin-arm64.sha256
           glm-linux-amd64/glm-linux-amd64
+          glm-linux-amd64/glm-linux-amd64.sha256
           glm-linux-arm64/glm-linux-arm64
+          glm-linux-arm64/glm-linux-arm64.sha256
         draft: false
         prerelease: false
       env:

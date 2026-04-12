@@ -6,13 +6,13 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/xqsit94/glm/internal/config"
-	"github.com/xqsit94/glm/pkg/paths"
+	"github.com/rodrigorodrigo/glm/internal/config"
+	"github.com/rodrigorodrigo/glm/pkg/paths"
 
 	"golang.org/x/term"
 )
 
-const DefaultModel = "glm-5"
+const DefaultModel = "glm-5.1"
 
 func Get() (string, error) {
 	if token := os.Getenv("ANTHROPIC_AUTH_TOKEN"); token != "" {
@@ -53,6 +53,15 @@ func Set() error {
 	fmt.Println()
 
 	tokenStr := strings.TrimSpace(string(tokenBytes))
+	return saveToken(tokenStr)
+}
+
+func SetNonInteractive(tokenStr string) error {
+	tokenStr = strings.TrimSpace(tokenStr)
+	return saveToken(tokenStr)
+}
+
+func saveToken(tokenStr string) error {
 	if tokenStr == "" {
 		return fmt.Errorf("token cannot be empty")
 	}

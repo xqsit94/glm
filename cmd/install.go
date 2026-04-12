@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/xqsit94/glm/internal/installer"
+	"github.com/rodrigorodrigo/glm/internal/installer"
 
 	"github.com/spf13/cobra"
 )

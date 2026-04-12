@@ -7,13 +7,14 @@ import (
 	"strings"
 
 	"github.com/spf13/pflag"
-	"github.com/xqsit94/glm/internal/token"
+	"github.com/rodrigorodrigo/glm/internal/config"
+	"github.com/rodrigorodrigo/glm/internal/token"
 
 	"github.com/spf13/cobra"
 )
 
 const (
-	version = "1.2.1"
+	version = "1.4.0"
 )
 
 func RootCmd() *cobra.Command {
@@ -115,8 +116,14 @@ func runDefaultAction(cmd *cobra.Command, model string, yolo bool) error {
 	claudeCmd.Stdin = os.Stdin
 	claudeCmd.Stdout = os.Stdout
 	claudeCmd.Stderr = os.Stderr
+	cfg, _ := config.Load()
+	baseURL := config.DefaultBaseURL
+	if cfg != nil && cfg.BaseURL != "" {
+		baseURL = cfg.BaseURL
+	}
+
 	claudeCmd.Env = append(os.Environ(),
-		"ANTHROPIC_BASE_URL=https://open.bigmodel.cn/api/anthropic",
+		"ANTHROPIC_BASE_URL="+baseURL,
 		"ANTHROPIC_AUTH_TOKEN="+authToken,
 		"ANTHROPIC_MODEL="+model,
 	)

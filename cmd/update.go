@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/xqsit94/glm/internal/updater"
+	"github.com/rodrigorodrigo/glm/internal/updater"
 
 	"github.com/spf13/cobra"
 )
@@ -103,6 +103,12 @@ func runUpdate(checkOnly, force bool) error {
 	}
 
 	fmt.Println("\n✅ Download complete!")
+
+	fmt.Println("🔍 Verifying checksum...")
+	if err := updater.VerifyChecksum(binaryPath, info.LatestVersion, osName, arch); err != nil {
+		fmt.Printf("❌ Checksum verification failed: %v\n", err)
+		return err
+	}
 
 	fmt.Println("🔧 Installing update...")
 
