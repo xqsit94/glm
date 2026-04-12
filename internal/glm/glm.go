@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/xqsit94/glm/internal/config"
-	"github.com/xqsit94/glm/pkg/paths"
+	"github.com/rodrigorodrigo/glm/internal/config"
+	"github.com/rodrigorodrigo/glm/pkg/paths"
 )
 
 func Enable(model, token string) error {

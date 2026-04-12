@@ -6,8 +6,8 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/xqsit94/glm/internal/config"
-	"github.com/xqsit94/glm/pkg/paths"
+	"github.com/rodrigorodrigo/glm/internal/config"
+	"github.com/rodrigorodrigo/glm/pkg/paths"
 
 	"golang.org/x/term"
 )

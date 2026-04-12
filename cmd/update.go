@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/xqsit94/glm/internal/updater"
+	"github.com/rodrigorodrigo/glm/internal/updater"
 
 	"github.com/spf13/cobra"
 )

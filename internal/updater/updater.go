@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	githubRepo = "xqsit94/glm"
+	githubRepo = "rodrigorodrigo/glm"
 	apiURL     = "https://api.github.com/repos/" + githubRepo + "/releases/latest"
 )
 

@@ -7,13 +7,13 @@ import (
 	"strings"
 
 	"github.com/spf13/pflag"
-	"github.com/xqsit94/glm/internal/token"
+	"github.com/rodrigorodrigo/glm/internal/token"
 
 	"github.com/spf13/cobra"
 )
 
 const (
-	version = "1.2.1"
+	version = "1.4.0"
 )
 
 func RootCmd() *cobra.Command {
