@@ -1,6 +1,8 @@
 package updater
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -160,6 +162,46 @@ func VerifyBinary(path string) error {
 		return fmt.Errorf("failed to make binary executable: %v", err)
 	}
 
+	return nil
+}
+
+func VerifyChecksum(binaryPath, version, osName, arch string) error {
+	binaryName := fmt.Sprintf("glm-%s-%s", osName, arch)
+	checksumURL := fmt.Sprintf("https://github.com/%s/releases/download/%s/%s.sha256", githubRepo, version, binaryName)
+
+	resp, err := http.Get(checksumURL)
+	if err != nil || resp.StatusCode != http.StatusOK {
+		fmt.Println("⚠️  No checksum file found, skipping verification")
+		return nil
+	}
+	defer resp.Body.Close()
+
+	checksumData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("⚠️  Failed to read checksum file, skipping verification")
+		return nil
+	}
+
+	expectedHash := strings.TrimSpace(strings.Fields(string(checksumData))[0])
+
+	f, err := os.Open(binaryPath)
+	if err != nil {
+		return fmt.Errorf("failed to open binary for checksum: %v", err)
+	}
+	defer f.Close()
+
+	h := sha256.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return fmt.Errorf("failed to compute checksum: %v", err)
+	}
+
+	actualHash := hex.EncodeToString(h.Sum(nil))
+
+	if actualHash != expectedHash {
+		return fmt.Errorf("checksum mismatch: expected %s, got %s", expectedHash, actualHash)
+	}
+
+	fmt.Println("✅ Checksum verified")
 	return nil
 }
 

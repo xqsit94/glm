@@ -53,6 +53,15 @@ func Set() error {
 	fmt.Println()
 
 	tokenStr := strings.TrimSpace(string(tokenBytes))
+	return saveToken(tokenStr)
+}
+
+func SetNonInteractive(tokenStr string) error {
+	tokenStr = strings.TrimSpace(tokenStr)
+	return saveToken(tokenStr)
+}
+
+func saveToken(tokenStr string) error {
 	if tokenStr == "" {
 		return fmt.Errorf("token cannot be empty")
 	}
